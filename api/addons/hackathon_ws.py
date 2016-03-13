@@ -45,7 +45,7 @@ def get_user_result():
     
     user = request.query['user']
     
-    
+    ret_res = []
     with connection.cursor() as cursor:
             # Read a single record
             sql = "select r.host,r.successPath  from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "'" 
@@ -60,10 +60,14 @@ def get_user_result():
 #                print(row)
             
             result = cursor.fetchall()
+            
             print(result)
+            
+            for line in result:
+                ret_res.append(line['host'] + line['successPath'])
     
 
-    return {"ok":"true","res":result}
+    return {"ok":"true","res":ret_res}
 
 
 
