@@ -129,7 +129,7 @@ def subscribe_to_javelin():
             
         maleware = results[0]['count']
             
-        message = 'We got your Javelin Results: Out of 12 Maleware we check ' + str(maleware) + ' were Allowed!! , you had: ' + str(allowed) + ' server allowed and ' + str(blocked) +' server blocked, list of allowed server are in '
+        message = 'We got your Javelin Agent Results for the last 24 Hours: Out of 12 Malewares we check ' + str(maleware) + ' were Allowed!! , you had: ' + str(allowed) + ' server allowed and ' + str(blocked) +' server blocked, list of allowed server are in '
         message += 'http://localhost:8080/get_user_results?user=' + user
         message_data = {
             "type": 'private',
@@ -208,7 +208,7 @@ def start_javlin():
             
         maleware = results[0]['count']
             
-        message = 'We got your Javelin Results: Out of 12 Maleware we check ' + str(maleware) + ' were NOT Blocked!! , you had: ' + str(allowed) + ' server allowed and ' + str(blocked) +' server blocked, list of allowed server are in '
+        message = 'We got your Javelin Results: Out of 12 Maleware we check ' + str(maleware) + ' were Allowed!! , you had: ' + str(allowed) + ' server allowed and ' + str(blocked) +' server blocked, list of allowed server are in '
         message += 'http://localhost:8080/get_user_results?user=' + user
         message_data = {
             "type": 'private',
