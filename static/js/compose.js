@@ -580,7 +580,7 @@ function send_message(request) {
 
     if (request.content.match(/subscribe to Javelin.*/) != null) {
 
-      var user_id = request.split('=').slice(-1).pop().replace(/ /g,'');
+      var user_id = request.content.split('=').slice(-1).pop().replace(/ /g,'');
       
       // Call to X-Javelin server to subscribe to Javelin Agent
       $.ajax({
