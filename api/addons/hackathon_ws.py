@@ -18,7 +18,7 @@ import time
 import pymysql
 
 import zulip
-
+import random 
 
 # Connect to the database
 connection = pymysql.connect(host='attacksimulator-prod-us.csbgmyot2qon.us-east-1.rds.amazonaws.com',
@@ -31,7 +31,7 @@ zulip_client = zulip.Client(email="xjavelin-bot@zulip.com",
                             api_key="hchm6HEGbqDi4y2v3bEJKeWgLdFbikCR", 
                             site="http://localhost:9991/",insecure=True
                             )
-
+random.seed(1)
 
 
 def error500(error):
@@ -84,8 +84,10 @@ def start_javlin():
     while (len(result) == 0) or (result[0]['count'] < 12 ):
         result =[]
         with connection.cursor() as cursor:
-            time.sleep(20)                
-            sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.userId = '" + user + "'" 
+            time.sleep(20)        
+            irand = random.randint(1,1000000000)
+                    
+            sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.userId = '" + user + "' and " +   str(irand) + " = " str(irand)
             print(sql)
             cursor.execute(sql)
             result = cursor.fetchall()
