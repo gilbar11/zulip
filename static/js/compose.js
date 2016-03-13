@@ -551,8 +551,9 @@ function send_message(request) {
           alert('Please allow popups for this site');
       }
 
+      // Call to X-Javelin server
       $.ajax({
-      url: "http://localhost:9991/TEST-TEST-TEST",
+      url: "http://localhost:8080/start_javelin",
       data: { user: rand, email: page_params['email'] },
       success: function(e) {
         console.log(e);
