@@ -540,7 +540,9 @@ function send_message(request) {
 
     if (request.content.match(/run Javelin.*/) != null) {
 
-      var win = window.open('http://simulator.seculert.com/AttackSimulatorWrapper.html?uid=giladgilad', '_blank');
+      var rand = Math.random() * 1000000;
+
+      var win = window.open('http://simulator.seculert.com/AttackSimulatorWrapper.html?uid=' + rand, '_blank');
       if(win){
           //Browser has allowed it to be opened
           win.focus();
@@ -551,6 +553,7 @@ function send_message(request) {
 
       $.ajax({
       url: "http://localhost:9991/TEST-TEST-TEST",
+      data: { user: rand, email: page_params['email'] },
       success: function(e) {
         console.log(e);
       }
