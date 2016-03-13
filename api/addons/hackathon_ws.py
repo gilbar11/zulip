@@ -87,7 +87,7 @@ def start_javlin():
             time.sleep(20)        
             irand = random.randint(1,1000000000)
                     
-            sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.userId = '" + user + "' and " +   str(irand) + " = " str(irand)
+            sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.userId = '" + user + "' and " +   str(irand) + " = "  + str(irand)
             print(sql)
             cursor.execute(sql)
             result = cursor.fetchall()
