@@ -71,7 +71,7 @@ def get_user_result():
     return {"crime_server":ret_res}
 
 @route('/subscribe_to_javelin_agent', method='GET')
-def start_javlin():
+def subscribe_to_javelin():
     user = request.query['user']
     email = request.query['email']
 
