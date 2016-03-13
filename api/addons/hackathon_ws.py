@@ -78,24 +78,23 @@ def start_javlin():
             # Read a single record
             result =[]
             
-            while (len(result) < 1 ):
-                time.sleep(20)
-                sql = "select s.requestStatus,count(*) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "' group by s.requestStatus" 
-                cursor.execute(sql)
-            
+            while (len(result) == 0) or (result[0]['count'] < 12 ):
+                time.sleep(20)                
+                sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.userId = '" + user + "'" 
                 print(sql)
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                print(result)
+                
+            sql = "select s.requestStatus,count(*) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "' group by s.requestStatus" 
+            cursor.execute(sql)
+            
+            print(sql)
                 #print(cursor.description)
 
-                print()
+            print()
 
-#            for row in cursor:
-#                print(row)
-            
-                result = cursor.fetchall()
-
-            print(result)
-            
-            # send answer to zulip client 
+            result = cursor.fetchall()
             
             allowed = 0 
             blocked = 0 
@@ -106,6 +105,7 @@ def start_javlin():
                 if line['requestStatus'] == 'BLOCK':
                     blocked = line['count']
             # second query number of threat types
+
             sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "'" 
             cursor.execute(sql)
             results = cursor.fetchall()
@@ -122,9 +122,24 @@ def start_javlin():
             }
             print(zulip_client.send_message(message_data))
             
-            
             return {"ok":"true","res":result}
             
+@route('/update_proxy', method='GET')
+def update_server():
+    user = request.query['user']
+    email = request.query['email']
+
+    message = 'Your Proxy Block list was updated!'
+    message_data = {
+                "type": 'private',
+                "content": message,
+                "subject": 'Javelin Results:Proxy Block list - Server update!',
+                "to": email
+            }
+    print(zulip_client.send_message(message_data))
+    return {"ok":"true"}
+
+
 
 
 run(host='0.0.0.0', port=8080, debug=True)
