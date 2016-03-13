@@ -70,6 +70,73 @@ def get_user_result():
     connection.close()
     return {"crime_server":ret_res}
 
+@route('/subscribe_to_javelin_agent', method='GET')
+def start_javlin():
+    user = request.query['user']
+    email = request.query['email']
+
+    print(email)
+
+    message = 'You Sucessfully Subscribed to Javelin Agent!'
+    message_data = {
+        "type": 'private',
+        "content": message,
+        "subject": 'Javelin Agent Subscription',
+        "to": email
+    }
+    print(zulip_client.send_message(message_data))
+
+
+
+            # Read a single record
+    
+    connection = pymysql.connect(host='attacksimulator-prod-us.csbgmyot2qon.us-east-1.rds.amazonaws.com',
+                             user='hackaton_ro',
+                             password='seculert1234',
+                             db='hoverfly',
+                             cursorclass=pymysql.cursors.DictCursor)
+    
+    
+    result =[]        
+    time.sleep(20)
+    with connection.cursor() as cursor:
+                
+        sql = "select s.requestStatus,count(*) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "' group by s.requestStatus" 
+        cursor.execute(sql)
+            
+        print(sql)
+        print()
+
+        result = cursor.fetchall()
+            
+        allowed = 0 
+        blocked = 0 
+            
+        for line in result:
+            if line['requestStatus'] == 'ALLOW':
+                allowed = line['count']
+            if line['requestStatus'] == 'BLOCK':
+                blocked = line['count']
+            # second query number of threat types
+
+        sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "'" 
+        cursor.execute(sql)
+        results = cursor.fetchall()
+            
+        maleware = results[0]['count']
+            
+        message = 'We got your Javelin Results: Out of 12 Maleware we check ' + str(maleware) + ' were NOT Blocked!! , you had: ' + str(allowed) + ' server allowed and ' + str(blocked) +' server blocked, list of allowed server are in '
+        message += 'http://localhost:8080/get_user_results?user=' + user
+        message_data = {
+            "type": 'private',
+            "content": message,
+            "subject": 'Javelin Agent Results: get your updated black list!!!',
+            "to": email
+        }
+        print(zulip_client.send_message(message_data))
+        connection.close()
+        return {"ok":"true","res":result}
+
 
 
 @route('/start_javelin', method='GET')
