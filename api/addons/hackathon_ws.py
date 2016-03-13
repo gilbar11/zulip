@@ -78,55 +78,56 @@ def start_javlin():
 
     print(email)
 
-    with connection.cursor() as cursor:
             # Read a single record
-            result =[]
-            
-            while (len(result) == 0) or (result[0]['count'] < 12 ):
-                time.sleep(20)                
-                sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.userId = '" + user + "'" 
-                print(sql)
-                cursor.execute(sql)
-                result = cursor.fetchall()
-                print(result)
-                
-            sql = "select s.requestStatus,count(*) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "' group by s.requestStatus" 
-            cursor.execute(sql)
-            
+    
+    result =[]        
+    while (len(result) == 0) or (result[0]['count'] < 12 ):
+        result =[]
+        with connection.cursor() as cursor:
+            time.sleep(20)                
+            sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.userId = '" + user + "'" 
             print(sql)
-                #print(cursor.description)
-
-            print()
-
+            cursor.execute(sql)
             result = cursor.fetchall()
+            print(result)
+
+    with connection.cursor() as cursor:
+                
+        sql = "select s.requestStatus,count(*) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "' group by s.requestStatus" 
+        cursor.execute(sql)
             
-            allowed = 0 
-            blocked = 0 
+        print(sql)
+        print()
+
+        result = cursor.fetchall()
             
-            for line in result:
-                if line['requestStatus'] == 'ALLOW':
-                    allowed = line['count']
-                if line['requestStatus'] == 'BLOCK':
-                    blocked = line['count']
+        allowed = 0 
+        blocked = 0 
+            
+        for line in result:
+            if line['requestStatus'] == 'ALLOW':
+                allowed = line['count']
+            if line['requestStatus'] == 'BLOCK':
+                blocked = line['count']
             # second query number of threat types
 
-            sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "'" 
-            cursor.execute(sql)
-            results = cursor.fetchall()
+        sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "'" 
+        cursor.execute(sql)
+        results = cursor.fetchall()
             
-            maleware = results[0]['count']
+        maleware = results[0]['count']
             
-            message = 'We got your Javelin Results: Out of 12 Maleware we check ' + str(maleware) + ' were NOT Blocked!! , you had: ' + str(allowed) + ' server allowed and ' + str(blocked) +' server blocked, list of allowed server are in '
-            message += 'http://localhost:8080/get_user_results?user=' + user
-            message_data = {
-                "type": 'private',
-                "content": message,
-                "subject": 'Javelin Results: get your black list!!!',
-                "to": email
-            }
-            print(zulip_client.send_message(message_data))
+        message = 'We got your Javelin Results: Out of 12 Maleware we check ' + str(maleware) + ' were NOT Blocked!! , you had: ' + str(allowed) + ' server allowed and ' + str(blocked) +' server blocked, list of allowed server are in '
+        message += 'http://localhost:8080/get_user_results?user=' + user
+        message_data = {
+            "type": 'private',
+            "content": message,
+            "subject": 'Javelin Results: get your black list!!!',
+            "to": email
+        }
+        print(zulip_client.send_message(message_data))
             
-            return {"ok":"true","res":result}
+        return {"ok":"true","res":result}
             
 @route('/update_proxy', method='GET')
 def update_server():
