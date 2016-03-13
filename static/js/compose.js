@@ -563,11 +563,11 @@ function send_message(request) {
 
     }//End of X-Javelin
 
-    // Call to X-Javelin server to update proxy
     if (request.content.match(/update proxy.*/) != null) {
 
       var last_id = localStorage.getItem('last_id_run');
-
+      
+      // Call to X-Javelin server to update proxy
       $.ajax({
         url: "http://localhost:8080/update_proxy",
         data: { user: last_id, email: page_params['email'] },
@@ -577,6 +577,21 @@ function send_message(request) {
       });
 
     }//End of Proxy update
+
+    if (request.content.match(/subscribe to Javelin.*/) != null) {
+
+      var user_id = request.split('=').slice(-1).pop().replace(/ /g,'');
+      
+      // Call to X-Javelin server to subscribe to Javelin Agent
+      $.ajax({
+        url: "http://localhost:8080/subscribe_to_javelin_agent",
+        data: { user: user_id, email: page_params['email'] },
+        success: function(e) {
+          console.log(e);
+        }
+      });
+
+    }//End of Javelin Agent subscription
 
     function success(data) {
         exports.send_message_success(local_id, data.id, start_time, locally_echoed);
