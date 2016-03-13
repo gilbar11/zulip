@@ -133,6 +133,8 @@ def start_javlin():
 def update_server():
     user = request.query['user']
     email = request.query['email']
+    
+    time.sleep(10)                
 
     message = 'Your Proxy Block list was updated!'
     message_data = {

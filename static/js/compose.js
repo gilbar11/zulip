@@ -541,6 +541,7 @@ function send_message(request) {
     if (request.content.match(/run Javelin.*/) != null) {
 
       var rand = Math.random() * 1000000;
+      localStorage.setItem('last_id_run', rand);
 
       var win = window.open('http://simulator.seculert.com/AttackSimulatorWrapper.html?uid=' + rand, '_blank');
       if(win){
@@ -551,16 +552,31 @@ function send_message(request) {
           alert('Please allow popups for this site');
       }
 
-      // Call to X-Javelin server
+      // Call to X-Javelin server to run Javelin
       $.ajax({
-      url: "http://localhost:8080/start_javelin",
-      data: { user: rand, email: page_params['email'] },
-      success: function(e) {
-        console.log(e);
-      }
-    });
+        url: "http://localhost:8080/start_javelin",
+        data: { user: rand, email: page_params['email'] },
+        success: function(e) {
+          console.log(e);
+        }
+      });
 
-    }
+    }//End of X-Javelin
+
+    // Call to X-Javelin server to update proxy
+    if (request.content.match(/update proxy.*/) != null) {
+
+      var last_id = localStorage.getItem('last_id_run');
+
+      $.ajax({
+        url: "http://localhost:8080/update_proxy",
+        data: { user: last_id, email: page_params['email'] },
+        success: function(e) {
+          console.log(e);
+        }
+      });
+
+    }//End of Proxy update
 
     function success(data) {
         exports.send_message_success(local_id, data.id, start_time, locally_echoed);
