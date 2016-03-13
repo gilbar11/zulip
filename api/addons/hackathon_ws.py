@@ -19,6 +19,7 @@ import pymysql
 
 import zulip
 import random 
+from datetime import datetime,timedelta
 
 # Connect to the database
 
@@ -76,8 +77,9 @@ def subscribe_to_javelin():
     email = request.query['email']
 
     print(email)
+    time.sleep(5)
 
-    message = 'You Sucessfully Subscribed to Javelin Agent!'
+    message = 'You Sucessfully Subscribed to Javelin Agent with user = ' + user
     message_data = {
         "type": 'private',
         "content": message,
@@ -97,11 +99,13 @@ def subscribe_to_javelin():
                              cursorclass=pymysql.cursors.DictCursor)
     
     
+    ttime = str(datetime.today() - timedelta(days = 1))
+    
     result =[]        
     time.sleep(20)
     with connection.cursor() as cursor:
                 
-        sql = "select s.requestStatus,count(*) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "' group by s.requestStatus" 
+        sql = "select s.requestStatus,count(*) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "'and s.executionTime > '" + ttime  + "' group by s.requestStatus" 
         cursor.execute(sql)
             
         print(sql)
@@ -119,13 +123,13 @@ def subscribe_to_javelin():
                 blocked = line['count']
             # second query number of threat types
 
-        sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "'" 
+        sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "'and s.executionTime > '" + ttime + "'"
         cursor.execute(sql)
         results = cursor.fetchall()
             
         maleware = results[0]['count']
             
-        message = 'We got your Javelin Results: Out of 12 Maleware we check ' + str(maleware) + ' were NOT Blocked!! , you had: ' + str(allowed) + ' server allowed and ' + str(blocked) +' server blocked, list of allowed server are in '
+        message = 'We got your Javelin Results: Out of 12 Maleware we check ' + str(maleware) + ' were Allowed!! , you had: ' + str(allowed) + ' server allowed and ' + str(blocked) +' server blocked, list of allowed server are in '
         message += 'http://localhost:8080/get_user_results?user=' + user
         message_data = {
             "type": 'private',
