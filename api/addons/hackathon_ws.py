@@ -21,11 +21,6 @@ import zulip
 import random 
 
 # Connect to the database
-connection = pymysql.connect(host='attacksimulator-prod-us.csbgmyot2qon.us-east-1.rds.amazonaws.com',
-                             user='hackaton_ro',
-                             password='seculert1234',
-                             db='hoverfly',
-                             cursorclass=pymysql.cursors.DictCursor)
 
 zulip_client = zulip.Client(email="xjavelin-bot@zulip.com", 
                             api_key="hchm6HEGbqDi4y2v3bEJKeWgLdFbikCR", 
@@ -42,6 +37,12 @@ def error500(error):
 def get_user_result():
     print request     
     #print request.body
+
+    connection = pymysql.connect(host='attacksimulator-prod-us.csbgmyot2qon.us-east-1.rds.amazonaws.com',
+                             user='hackaton_ro',
+                             password='seculert1234',
+                             db='hoverfly',
+                             cursorclass=pymysql.cursors.DictCursor)
     
     user = request.query['user']
     
@@ -66,7 +67,7 @@ def get_user_result():
             for line in result:
                 ret_res.append(line['host'] + line['successPath'])
     
-
+    connection.close()
     return {"ok":"true","res":ret_res}
 
 
@@ -79,6 +80,13 @@ def start_javlin():
     print(email)
 
             # Read a single record
+    
+    connection = pymysql.connect(host='attacksimulator-prod-us.csbgmyot2qon.us-east-1.rds.amazonaws.com',
+                             user='hackaton_ro',
+                             password='seculert1234',
+                             db='hoverfly',
+                             cursorclass=pymysql.cursors.DictCursor)
+    
     
     result =[]        
     while (len(result) == 0) or (result[0]['count'] < 12 ):
@@ -93,6 +101,14 @@ def start_javlin():
             result = cursor.fetchall()
             print(result)
             cursor.close()
+        connection.close()
+        connection = pymysql.connect(host='attacksimulator-prod-us.csbgmyot2qon.us-east-1.rds.amazonaws.com',
+                                     user='hackaton_ro',
+                                     password='seculert1234',
+                                     db='hoverfly',
+                                     cursorclass=pymysql.cursors.DictCursor)
+            
+            
 
     with connection.cursor() as cursor:
                 
@@ -129,7 +145,7 @@ def start_javlin():
             "to": email
         }
         print(zulip_client.send_message(message_data))
-            
+        connection.close()
         return {"ok":"true","res":result}
             
 @route('/update_proxy', method='GET')
