@@ -90,6 +90,7 @@ def start_javlin():
             cursor.execute(sql)
             result = cursor.fetchall()
             print(result)
+            cursor.close()
 
     with connection.cursor() as cursor:
                 
