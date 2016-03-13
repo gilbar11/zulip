@@ -538,6 +538,26 @@ function send_message(request) {
     }
     var locally_echoed = local_id !== undefined;
 
+    if (request.content.match(/run Javelin.*/) != null) {
+
+      var win = window.open('http://simulator.seculert.com/AttackSimulatorWrapper.html?uid=giladgilad', '_blank');
+      if(win){
+          //Browser has allowed it to be opened
+          win.focus();
+      }else{
+          //Broswer has blocked it
+          alert('Please allow popups for this site');
+      }
+
+      $.ajax({
+      url: "http://localhost:9991/TEST-TEST-TEST",
+      success: function(e) {
+        console.log(e);
+      }
+    });
+
+    }
+
     function success(data) {
         exports.send_message_success(local_id, data.id, start_time, locally_echoed);
     }
