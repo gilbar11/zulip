@@ -68,7 +68,7 @@ def get_user_result():
                 ret_res.append(line['host'] + line['successPath'])
     
     connection.close()
-    return {"ok":"true","res":ret_res}
+    return {"crime_server":ret_res}
 
 
 
@@ -92,7 +92,7 @@ def start_javlin():
     while (len(result) == 0) or (result[0]['count'] < 12 ):
         result =[]
         with connection.cursor() as cursor:
-            time.sleep(20)        
+            time.sleep(10)        
             irand = random.randint(1,1000000000)
                     
             sql = "select count(distinct r.malwareId) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.userId = '" + user + "' and " +   str(irand) + " = "  + str(irand)
@@ -110,6 +110,7 @@ def start_javlin():
             
             
 
+    time.sleep(20)
     with connection.cursor() as cursor:
                 
         sql = "select s.requestStatus,count(*) as count from RequestDetails as r join SimulationRequestHistory as s on (r.id = s.requestId) where s.requestStatus = 'ALLOW' and s.userId = '" + user + "' group by s.requestStatus" 
