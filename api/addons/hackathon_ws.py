@@ -79,7 +79,7 @@ def subscribe_to_javelin():
     print(email)
     time.sleep(5)
 
-    message = 'You Sucessfully Subscribed to Javelin Agent with user = ' + user
+    message = 'You successfully subscribed to track Javelin Agent of user: ' + user
     message_data = {
         "type": 'private',
         "content": message,
@@ -128,9 +128,14 @@ def subscribe_to_javelin():
         results = cursor.fetchall()
             
         maleware = results[0]['count']
-            
-        message = 'We got your Javelin Agent Results for the last 24 Hours: Out of 12 Malewares we check ' + str(maleware) + ' were Allowed!! , you had: ' + str(allowed) + ' server allowed and ' + str(blocked) +' server blocked, list of allowed server are in '
+
+        message = 'Hey, Javelin Results for the last 24 hours -\n'
+        message += str(maleware) + ' were Allowed,\n'
+        message += str(12 - maleware) + ' were Blocked,\n'
+        message += str(allowed) + ' C&C servers were Allowed,\n'
+        message += str(blocked) + ' C&C server were Blocked,\n The list of Allowed C&C servers could be found here: '
         message += 'http://localhost:8080/get_user_results?user=' + user
+            
         message_data = {
             "type": 'private',
             "content": message,
@@ -208,7 +213,11 @@ def start_javlin():
             
         maleware = results[0]['count']
             
-        message = 'We got your Javelin Results: Out of 12 Maleware we check ' + str(maleware) + ' were Allowed!! , you had: ' + str(allowed) + ' server allowed and ' + str(blocked) +' server blocked, list of allowed server are in '
+        message = 'Hey, We got your Javelin Results: \n12 Malewares were replayed in your network -\n'
+        message += str(maleware) + ' were Allowed,\n'
+        message += str(12 - maleware) + ' were Blocked,\n'
+        message += str(allowed) + ' C&C servers were Allowed,\n'
+        message += str(blocked) + ' C&C server were Blocked,\n The list of Allowed C&C servers could be found here: '
         message += 'http://localhost:8080/get_user_results?user=' + user
         message_data = {
             "type": 'private',
@@ -227,7 +236,7 @@ def update_server():
     
     time.sleep(10)                
 
-    message = 'Your Proxy Block list was updated!'
+    message = "Hey Mr. Analyst,\nYour Proxy's black list was updated!"
     message_data = {
                 "type": 'private',
                 "content": message,
